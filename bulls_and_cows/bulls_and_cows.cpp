@@ -1,7 +1,7 @@
 // game of bulls and cows
 // v1.0 2018-03-03
 
-#include "../../std_lib_facilities.h"
+#include "std_lib_facilities.h"
 
 vector<int> number_gen(vector<int> goal)
 {

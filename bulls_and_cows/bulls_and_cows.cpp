@@ -11,9 +11,9 @@ vector<int> number_gen(vector<int> goal)
 		goal[i] = (rand() % 10);
 		if (i >= 1)
 		{
-			for (int j = i; j >= 0; --j)
+			for (int j = i - 1; j >= 0; --j)
 			{
-				if (goal[i] == goal[j]) // removes repeated digits
+				while (goal[i] == goal[j]) // removes repeated digits
 				{
 					goal[i] = (rand() % 10);
 				}
@@ -39,7 +39,7 @@ vector<int> get_user_num(vector<int> empty_user_num)
 		if (!(cin >> empty_user_num[i])) error("Need integers");
 		if (i >= 1)
 		{
-			for (int j = i; j >= 0; --j)
+			for (int j = i - 1; j >= 0; --j)
 			{
 				if (empty_user_num[i] == empty_user_num[j]) // bars repeated digits
 				{
@@ -124,7 +124,6 @@ int main()
 			}
 			play_again = play_again_fun();
 		}
-		keep_window_open();
 		return 0;
 	}
 	catch (runtime_error& e)

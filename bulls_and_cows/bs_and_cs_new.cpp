@@ -9,65 +9,11 @@
 const string rules_check_text = "Would you like to read the rules?";
 const string play_again_text = "Would you like to play again?";
 
-// GAME LOOP (and necessary declarations)
+// FUNCTIONS
 // -----------------------------------------------------------------------------
 
-vector<int> initialise(vector<int> local);
-string number_gen(string number);
-string get_guess(string local);
-vector<int> compare(string guess, string goal, vector<int> result);
-void win(string number, int guesses);
-bool check(string check_text);
-
-void gameloop()
-{
-	bool play_again = true;
-	vector<int> bulls_and_cows(2);
-	string goal = "    ";
-	string guess;
-
-	while (play_again) {
-		int guesses = 0;
-		bulls_and_cows = initialise(bulls_and_cows);      // annoying to run this twice
-		goal = number_gen(goal);
-
-		cout << "\nI am thinking of 4 digits...try to guess them!\n";
-
-		while (bulls_and_cows[0] != 4) {
-			bulls_and_cows = initialise(bulls_and_cows);  // annoying to run this twice
-			++guesses;
-			guess = get_guess(guess);
-			bulls_and_cows = compare(guess, goal, bulls_and_cows);
-			cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";
-			if (bulls_and_cows[0] == 4)
-				win(goal, guesses);
-		}
-		play_again = check(play_again_text);
-	}
-	return;
-}
-
-void rules();
-
-void intro()
-{
-	bool print_rules = false;
-
-	cout << '\n'
-		<< "        ==== B U L L S ====\n"
-		<< "        ====== A N D ======\n"
-		<< "        ===== C O W S =====\n"
-		<< '\n';
-
-	print_rules = check(rules_check_text);
-	if (print_rules) {
-		rules();
-	} else
-		return;
-	return;
-}
-
 bool check(string check_text)
+// general [Y/n] test
 {
 	char checker = 'x';
 
@@ -85,26 +31,16 @@ bool check(string check_text)
 	}
 }
 
-void rules()
-{
-	cout << "I will think of 4 digits. You have to guess\n"
-		<< "each digit correctly and in the right place\n"
-		<< "to win. No digits will be repeated. If you\n"
-		<< "guess a digit correctly in the right place,\n"
-		<< "you get a Bull. If you guess a digit correctly\n"
-		<< "but in the wrong place, you get a Cow. 4 Bulls wins!\n";
-	return;
-}
-
 string number_gen(string number)
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 	vector<int> local_number(4);
+	// find another way to do this
 	vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 	for (size_t i = 0; i < local_number.size(); ++i) {
 		local_number[i] = (rand() % 10);
-		// remove repeated digits
+		// removes repeated digits
 		if (i >= 1) {
 			for (size_t j = i - 1; j < local_number.size(); --j) {
 				while (local_number[i] == local_number[j]) 
@@ -113,15 +49,14 @@ string number_gen(string number)
 		}
 	}
 	for (size_t i = 0; i < local_number.size(); ++i)
-		number[i] = numbers[local_number[i]];
+		number[i] = numbers[local_number[i]]; // populates string with char digits identical to local_number
 	return number;
 }
 
 vector<int> initialise(vector<int> local)
 {
-	for (size_t i = 0; i < local.size(); ++i) {
+	for (size_t i = 0; i < local.size(); ++i)
 		local[i] = 0;
-	}
 	return local;
 }
 
@@ -132,6 +67,7 @@ bool is_number(string& s)
 }
 
 string get_guess(string local)
+// accepts a string in the form "0000". Rejects wrong size, not all digits, repeated digits
 {
 	cin >> local;
 	if (local.size() != 4 || !is_number(local)) error("Guess must be 4 digits");
@@ -162,6 +98,64 @@ void win(string number, int guesses)
 	cout << "You win! My number was:\n"
 		<< number
 		<< "\nYou took " << guesses << " guesses\n";
+}
+
+void rules()
+{
+	cout << "I will think of 4 digits. You have to guess\n"
+		<< "each digit correctly and in the right place\n"
+		<< "to win. No digits will be repeated. If you\n"
+		<< "guess a digit correctly in the right place,\n"
+		<< "you get a Bull. If you guess a digit correctly\n"
+		<< "but in the wrong place, you get a Cow. 4 Bulls wins!\n";
+	return;
+}
+
+void intro()
+{
+	bool print_rules = false;
+
+	cout << '\n'
+		<< "        ==== B U L L S ====\n"
+		<< "        ====== A N D ======\n"
+		<< "        ===== C O W S =====\n"
+		<< '\n';
+
+	print_rules = check(rules_check_text);
+	if (print_rules) {
+		rules();
+	}
+	else
+		return;
+	return;
+}
+
+void gameloop()
+{
+	bool play_again = true;
+	vector<int> bulls_and_cows(2);
+	string goal = "    ";
+	string guess;
+
+	while (play_again) {
+		int guesses = 0;
+		bulls_and_cows = initialise(bulls_and_cows);
+		goal = number_gen(goal);
+
+		cout << "\nI am thinking of 4 digits...try to guess them!\n";
+
+		while (bulls_and_cows[0] != 4) {
+			bulls_and_cows = initialise(bulls_and_cows);
+			++guesses;
+			guess = get_guess(guess);
+			bulls_and_cows = compare(guess, goal, bulls_and_cows);
+			cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";
+			if (bulls_and_cows[0] == 4)
+				win(goal, guesses);
+		}
+		play_again = check(play_again_text);
+	}
+	return;
 }
 
 int main()

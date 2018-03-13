@@ -1,2 +1,6 @@
 # bulls_and_cows
-Bulls and Cows game in c++
+Bulls and Cows game in C++
+
+TODO:
+  - implement persistent highscores
+  - add guess counter

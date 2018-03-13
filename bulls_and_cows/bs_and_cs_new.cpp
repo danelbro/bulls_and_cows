@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v2.0 2018-03-11
+// v3.0 2018-03-13
 
 #include "std_lib_facilities.h"
 
@@ -41,12 +41,12 @@ string number_gen(string number)
 	for (size_t i = 0; i < local_number.size(); ++i) {
 		local_number[i] = (rand() % 10);
 		// removes repeated digits
-		if (i >= 1) {
-			for (size_t j = i - 1; j < local_number.size(); --j) {
-				while (local_number[i] == local_number[j]) 
-					local_number[i] = (rand() % 10);
-			}
-		}
+		// if (i >= 1) {
+		//	for (size_t j = i - 1; j < local_number.size(); --j) {
+		//		while (local_number[i] == local_number[j]) 
+		//			local_number[i] = (rand() % 10);
+		//	}
+		// }
 	}
 	for (size_t i = 0; i < local_number.size(); ++i)
 		number[i] = numbers[local_number[i]]; // populates string with char digits identical to local_number
@@ -67,30 +67,40 @@ bool is_number(string& s)
 }
 
 string get_guess(string local)
-// accepts a string in the form "0000". Rejects wrong size, not all digits, repeated digits
+// accepts a string in the form "0000". Rejects wrong size and not all digits
 {
 	cin >> local;
 	if (local.size() != 4 || !is_number(local)) error("Guess must be 4 digits");
-	for (size_t i = 1; i < local.size(); ++i) {
-		for (size_t j = i - 1; j < local.size(); --j) {
-			if (local[i] == local[j]) error("No repeated digits");
-		}
-	}
+	//	for (size_t i = 1; i < local.size(); ++i) {
+	//	for (size_t j = i - 1; j < local.size(); --j) {
+	//		if (local[i] == local[j]) error("No repeated digits");
+	//	}
+	//}
 	return local;
 }
 
 vector<int> compare(string guess, string goal, vector<int> result)
 {
-	for (size_t i = 0; i < guess.size(); ++i) {
-		if (guess[i] == goal[i]) ++result[0];
-			else if (guess[i] != goal[i]) {
-				for (size_t j = 0; j < goal.size(); ++j) {
-					if (guess[i] == goal[j])
-						++result[1];
-				}
-			}
+  // work out bulls
+  for (size_t i = 0; i < guess.size(); ++i) {
+    if (guess[i] == goal[i]) {
+      ++result[0];
+      goal[i] = 'x';
+    }
+  }
+  //work out cows
+  for (size_t i = 0; i < guess.size(); ++i) {
+    if (guess[i] != goal[i]) {
+      for (size_t j = 0; j < goal.size(); ++j) {
+	if (guess[i] == goal[j]) {
+	  ++result[1];
+	  goal[j] = 'x';
+	  break;
 	}
-	return result;
+      }
+    }
+  }
+  return result;
 }
 
 void win(string number, int guesses)
@@ -103,11 +113,11 @@ void win(string number, int guesses)
 void rules()
 {
 	cout << "I will think of 4 digits. You have to guess\n"
-		<< "each digit correctly and in the right place\n"
-		<< "to win. No digits will be repeated. If you\n"
-		<< "guess a digit correctly in the right place,\n"
-		<< "you get a Bull. If you guess a digit correctly\n"
-		<< "but in the wrong place, you get a Cow. 4 Bulls wins!\n";
+	     << "each digit correctly and in the right place\n"
+	     << "to win. If you guess a digit correctly in\n"
+	     << "the right place, you get a Bull. If you guess\n"
+	     << "a digit correctly but in the wrong place, you\n"
+	     << "get a Cow. 4 Bulls wins!\n";
 	return;
 }
 

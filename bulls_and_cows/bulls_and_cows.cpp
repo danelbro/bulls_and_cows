@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v3.0 2018-03-13
+// v3.1 2018-03-13
 
 #include "std_lib_facilities.h"
 
@@ -81,20 +81,26 @@ string get_guess(string local)
 
 vector<int> compare(string guess, string goal, vector<int> result)
 {
+  const char seen = 'x';
+  const char used = 'u';
+  
   // work out bulls
   for (size_t i = 0; i < guess.size(); ++i) {
     if (guess[i] == goal[i]) {
       ++result[0];
-      goal[i] = 'x';
+      guess[i] = used;
+      goal[i] = seen;
     }
   }
+  
   //work out cows
   for (size_t i = 0; i < guess.size(); ++i) {
     if (guess[i] != goal[i]) {
       for (size_t j = 0; j < goal.size(); ++j) {
 	if (guess[i] == goal[j]) {
 	  ++result[1];
-	  goal[j] = 'x';
+	  guess[i] = used;
+	  goal[j] = seen;
 	  break;
 	}
       }

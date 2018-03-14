@@ -87,9 +87,9 @@ vector<int> compare(string guess, string goal, vector<int> result)
   	// work out bulls
   	for (size_t i = 0; i < guess.size(); ++i) {
     		if (guess[i] == goal[i]) {
-      		++result[0];
-      		guess[i] = used;
-      		goal[i] = seen;
+      			++result[0];
+      			guess[i] = used;
+      			goal[i] = seen;
 		}
 	}
   
@@ -98,22 +98,22 @@ vector<int> compare(string guess, string goal, vector<int> result)
     		if (guess[i] != goal[i]) {
       			for (size_t j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
-	  			++result[1];
-	  			guess[i] = used;
-	  			goal[j] = seen;
-	  			break;
+	  				++result[1];
+	  				guess[i] = used;
+	  				goal[j] = seen;
+	  				break;
 				}
 			}
 		}
 	}
-  	return result;
+	return result;
 }
 
 void win(string number, int guesses)
 {
 	cout << "You win! My number was:\n"
-		<< number
-		<< "\nYou took " << guesses << " guesses\n";
+	     << number << '\n'
+	     << "You took " << guesses << " guesses\n";
 }
 
 void rules()
@@ -132,10 +132,10 @@ void intro()
 	bool print_rules = false;
 
 	cout << '\n'
-		<< "        ==== B U L L S ====\n"
-		<< "        ====== A N D ======\n"
-		<< "        ===== C O W S =====\n"
-		<< '\n';
+	     << "        ==== B U L L S ====\n"
+	     << "        ====== A N D ======\n"
+	     << "        ===== C O W S =====\n"
+	     << '\n';
 
 	print_rules = check(rules_check_text);
 	if (print_rules) {

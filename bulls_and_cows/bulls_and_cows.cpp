@@ -3,7 +3,7 @@
 
 #include "std_lib_facilities.h"
 
-// TEXT CONSTANTS
+// CONSTANTS
 // -----------------------------------------------------------------------------
 
 const string rules_check_text = "Would you like to read the rules?";
@@ -13,22 +13,23 @@ const string play_again_text = "Would you like to play again?";
 // -----------------------------------------------------------------------------
 
 int difficulty ()
-{
+{	
 	const string easy = "easy";
 	const string medium = "medium";
 	const string hard = "hard";
-	
-	map<string, int> difficulties;
-	difficulties[easy] = 6;
-	difficulties[medium] = 8;
-	difficulties[hard] = 10;
+
+	const unordered_map<string, int> difficulties = {
+		{ easy, 6 },
+		{ medium, 8 },
+		{ hard, 10 }
+	};
 
 	string diff_label;
 	while (diff_label != easy && diff_label != medium && diff_label != hard) {
 		cout << "\nChoose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
 		if (!(cin >> diff_label)) error("bad input");
 	}
-	return difficulties[diff_label];
+	return difficulties.at(diff_label);
 }
 
 bool check(string check_text)
@@ -137,7 +138,7 @@ void win(string number, int guesses)
 {
 	cout << "You win! My number was:\n"
 		<< number
-		<< "\nYou took " << guesses << " guesses\n";
+		<< "\nYou took " << guesses << " guesses.\n";
 }
 
 void rules()

@@ -25,7 +25,7 @@ int difficulty ()
 
 	string diff_label;
 	while (diff_label != easy && diff_label != medium && diff_label != hard) {
-		cout << "Choose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
+		cout << "\nChoose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
 		if (!(cin >> diff_label)) error("bad input");
 	}
 	return difficulties[diff_label];
@@ -56,6 +56,7 @@ string number_gen(string number, int top)
 	vector<int> local_number(4);
 	// find another way to do this
 	const vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
 	for (size_t i = 0; i < local_number.size(); ++i) {
 	    	if (top < 9)
 			local_number[i] = (rand() % top + 1);
@@ -69,9 +70,10 @@ string number_gen(string number, int top)
 		//			local_number[i] = (rand() % top);
 		//	}
 		// }
-	
+
 	for (size_t i = 0; i < local_number.size(); ++i)
-		number[i] = numbers[local_number[i]]; // populates string with char digits identical to local_number
+		number[i] = numbers[local_number[i]]; // populates string with char digits
+	                                              // identical to local_number
 	return number;
 }
 

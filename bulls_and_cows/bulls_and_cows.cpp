@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v3.1 2018-03-13
+// v3.2 2018-03-13
 
 #include "std_lib_facilities.h"
 
@@ -81,32 +81,32 @@ string get_guess(string local)
 
 vector<int> compare(string guess, string goal, vector<int> result)
 {
-  const char seen = 'x';
-  const char used = 'u';
+	const char seen = 'x';
+  	const char used = 'u';
   
-  // work out bulls
-  for (size_t i = 0; i < guess.size(); ++i) {
-    if (guess[i] == goal[i]) {
-      ++result[0];
-      guess[i] = used;
-      goal[i] = seen;
-    }
-  }
-  
-  //work out cows
-  for (size_t i = 0; i < guess.size(); ++i) {
-    if (guess[i] != goal[i]) {
-      for (size_t j = 0; j < goal.size(); ++j) {
-	if (guess[i] == goal[j]) {
-	  ++result[1];
-	  guess[i] = used;
-	  goal[j] = seen;
-	  break;
+  	// work out bulls
+  	for (size_t i = 0; i < guess.size(); ++i) {
+    		if (guess[i] == goal[i]) {
+      		++result[0];
+      		guess[i] = used;
+      		goal[i] = seen;
+		}
 	}
-      }
-    }
-  }
-  return result;
+  
+  	//work out cows
+  	for (size_t i = 0; i < guess.size(); ++i) {
+    		if (guess[i] != goal[i]) {
+      			for (size_t j = 0; j < goal.size(); ++j) {
+				if (guess[i] == goal[j]) {
+	  			++result[1];
+	  			guess[i] = used;
+	  			goal[j] = seen;
+	  			break;
+				}
+			}
+		}
+	}
+  	return result;
 }
 
 void win(string number, int guesses)
@@ -163,6 +163,7 @@ void gameloop()
 		while (bulls_and_cows[0] != 4) {
 			bulls_and_cows = initialise(bulls_and_cows);
 			++guesses;
+			cout << guesses << "> ";
 			guess = get_guess(guess);
 			bulls_and_cows = compare(guess, goal, bulls_and_cows);
 			cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";

@@ -1,9 +1,9 @@
 // bulls_and_cows
-// v3.2 2018-03-13
+// v3.3 2018-03-13
 
 #include "std_lib_facilities.h"
 
-// TEXT CONSTANTS
+// CONSTANTS
 // -----------------------------------------------------------------------------
 
 const string rules_check_text = "Would you like to read the rules?";
@@ -11,6 +11,26 @@ const string play_again_text = "Would you like to play again?";
 
 // FUNCTIONS
 // -----------------------------------------------------------------------------
+
+int difficulty ()
+{	
+	const string easy = "easy";
+	const string medium = "medium";
+	const string hard = "hard";
+
+	const unordered_map<string, int> difficulties = {
+		{ easy, 6 },
+		{ medium, 8 },
+		{ hard, 10 }
+	};
+
+	string diff_label;
+	while (diff_label != easy && diff_label != medium && diff_label != hard) {
+		cout << "\nChoose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
+		if (!(cin >> diff_label)) error("bad input");
+	}
+	return difficulties.at(diff_label);
+}
 
 bool check(string check_text)
 // general [Y/n] test
@@ -31,25 +51,30 @@ bool check(string check_text)
 	}
 }
 
-string number_gen(string number)
+string number_gen(string number, int top)
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 	vector<int> local_number(4);
 	// find another way to do this
-	vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	const vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 	for (size_t i = 0; i < local_number.size(); ++i) {
-		local_number[i] = (rand() % 10);
-		// removes repeated digits
+	    	if (top < 9)
+			local_number[i] = (rand() % top + 1);
+	    	else if (top > 9)
+			local_number[i] = (rand() % top);
+	}
+		// can remove repeated digits; incorporate into for loop if this is needed
 		// if (i >= 1) {
 		//	for (size_t j = i - 1; j < local_number.size(); --j) {
 		//		while (local_number[i] == local_number[j]) 
-		//			local_number[i] = (rand() % 10);
+		//			local_number[i] = (rand() % top);
 		//	}
 		// }
-	}
+
 	for (size_t i = 0; i < local_number.size(); ++i)
-		number[i] = numbers[local_number[i]]; // populates string with char digits identical to local_number
+		number[i] = numbers[local_number[i]]; // populates string with char digits
+	                                              // identical to local_number
 	return number;
 }
 
@@ -87,9 +112,9 @@ vector<int> compare(string guess, string goal, vector<int> result)
   	// work out bulls
   	for (size_t i = 0; i < guess.size(); ++i) {
     		if (guess[i] == goal[i]) {
-      			++result[0];
-      			guess[i] = used;
-      			goal[i] = seen;
+      		++result[0];
+      		guess[i] = used;
+      		goal[i] = seen;
 		}
 	}
   
@@ -98,22 +123,22 @@ vector<int> compare(string guess, string goal, vector<int> result)
     		if (guess[i] != goal[i]) {
       			for (size_t j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
-	  				++result[1];
-	  				guess[i] = used;
-	  				goal[j] = seen;
-	  				break;
+	  			++result[1];
+	  			guess[i] = used;
+	  			goal[j] = seen;
+	  			break;
 				}
 			}
 		}
 	}
-	return result;
+  	return result;
 }
 
 void win(string number, int guesses)
 {
 	cout << "You win! My number was:\n"
-	     << number << '\n'
-	     << "You took " << guesses << " guesses\n";
+		<< number
+		<< "\nYou took " << guesses << " guesses.\n";
 }
 
 void rules()
@@ -132,10 +157,10 @@ void intro()
 	bool print_rules = false;
 
 	cout << '\n'
-	     << "        ==== B U L L S ====\n"
-	     << "        ====== A N D ======\n"
-	     << "        ===== C O W S =====\n"
-	     << '\n';
+		<< "        ==== B U L L S ====\n"
+		<< "        ====== A N D ======\n"
+		<< "        ===== C O W S =====\n"
+		<< '\n';
 
 	print_rules = check(rules_check_text);
 	if (print_rules) {
@@ -154,9 +179,10 @@ void gameloop()
 	string guess;
 
 	while (play_again) {
+	        int diff_number = difficulty();
 		int guesses = 0;
 		bulls_and_cows = initialise(bulls_and_cows);
-		goal = number_gen(goal);
+		goal = number_gen(goal, diff_number);
 
 		cout << "\nI am thinking of 4 digits...try to guess them!\n";
 

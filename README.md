@@ -3,4 +3,4 @@ Bulls and Cows game in C++
 
 TODO:
   - implement persistent highscores
-  - add guess counter
+  - don't exit on bad input

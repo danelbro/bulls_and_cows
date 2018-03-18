@@ -1,7 +1,8 @@
 // bulls_and_cows
-// v3.3 2018-03-13
+// v4.0 2018-03-13
 
 #include "std_lib_facilities.h"
+#include <limits>
 
 // GLOBAL CONSTANTS
 // -----------------------------------------------------------------------------
@@ -19,7 +20,7 @@ void clean(runtime_error e)
 {
 	cerr << e.what();
 	cin.clear();
-	cin.ignore(10000, '\n');
+	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return;
 }
 

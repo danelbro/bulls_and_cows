@@ -3,14 +3,25 @@
 
 #include "std_lib_facilities.h"
 
-// CONSTANTS
+// GLOBAL CONSTANTS
 // -----------------------------------------------------------------------------
 
+const string prompt = "> ";
+const string quit = "quit";
+const string quit_text = "Gave up!\n";
 const string rules_check_text = "Would you like to read the rules?";
 const string play_again_text = "Would you like to play again?";
 
 // FUNCTIONS
 // -----------------------------------------------------------------------------
+
+void clean(runtime_error e)
+{
+	cerr << e.what();
+	cin.clear();
+	cin.ignore(10000, '\n');
+	return;
+}
 
 int difficulty ()
 {	
@@ -24,10 +35,19 @@ int difficulty ()
 		{ hard, 10 }
 	};
 
+	cout << "\nChoose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
+
 	string diff_label;
-	while (diff_label != easy && diff_label != medium && diff_label != hard) {
-		cout << "\nChoose a difficulty: easy (1-6) | medium (1-8) | hard (0-9)\n";
-		if (!(cin >> diff_label)) error("bad input");
+	while (true) {
+		try {
+			cin >> diff_label;
+			if (diff_label != easy && diff_label != medium && diff_label != hard)
+				error("easy | medium | hard\n");
+			else break;
+		}
+		catch (runtime_error& e) {
+			clean(e);
+		}
 	}
 	return difficulties.at(diff_label);
 }
@@ -36,17 +56,22 @@ bool check(string check_text)
 // general [Y/n] test
 {
 	char checker = 'x';
+	cout << check_text << " [Y/n]\n";
 
 	while (checker != 'Y' && checker != 'n') {
-		cout << check_text << " [Y/n]\n";
-		cin >> checker;
-		switch (checker) {
-		case 'Y':
-			return true;
-		case 'n':
-			return false;
-		default:
-			continue;
+		try {
+			if (!(cin >> checker)) error("Enter Y/n: ");
+			switch (checker) {
+			case 'Y':
+				return true;
+			case 'n':
+				return false;
+			default:
+				error("Enter Y/n: ");
+			}
+		}
+		catch (runtime_error& e) {
+			clean(e);
 		}
 	}
 }
@@ -91,11 +116,22 @@ bool is_number(string& s)
 		s.end(), [](char c) { return !isdigit(c); }) == s.end();
 }
 
-string get_guess(string local)
+string get_guess(string local, int guesses)
 // accepts a string in the form "0000". Rejects wrong size and not all digits
 {
-	cin >> local;
-	if (local.size() != 4 || !is_number(local)) error("Guess must be 4 digits");
+	while (true) {
+		try {
+			cin >> local;
+			if (local == quit) return local;
+			else if (local.size() != 4 || !is_number(local)) error("Guess must be 4 digits!\n");
+			break;
+		}
+		catch (runtime_error& e) {
+			clean(e);
+			cout << guesses << prompt;
+		}
+	}
+
 	//	for (size_t i = 1; i < local.size(); ++i) {
 	//	for (size_t j = i - 1; j < local.size(); --j) {
 	//		if (local[i] == local[j]) error("No repeated digits");
@@ -136,19 +172,20 @@ vector<int> compare(string guess, string goal, vector<int> result)
 
 void win(string number, int guesses)
 {
-	cout << "You win! My number was:\n"
-		<< number
-		<< "\nYou took " << guesses << " guesses.\n";
+	cout << "You win! My number was: "
+		<< number << '\n'
+		<< "You took " << guesses << " guesses.\n";
 }
 
 void rules()
 {
 	cout << "I will think of 4 digits. You have to guess\n"
-	     << "each digit correctly and in the right place\n"
-	     << "to win. If you guess a digit correctly in\n"
-	     << "the right place, you get a Bull. If you guess\n"
-	     << "a digit correctly but in the wrong place, you\n"
-	     << "get a Cow. 4 Bulls wins!\n";
+		<< "each digit correctly and in the right place\n"
+		<< "to win. If you guess a digit correctly in\n"
+		<< "the right place, you get a Bull. If you guess\n"
+		<< "a digit correctly but in the wrong place, you\n"
+		<< "get a Cow. 4 Bulls wins! (Type \"quit\" to\n"
+		<< "give up for the round.)\n";
 	return;
 }
 
@@ -179,7 +216,7 @@ void gameloop()
 	string guess;
 
 	while (play_again) {
-	        int diff_number = difficulty();
+		int diff_number = difficulty();
 		int guesses = 0;
 		bulls_and_cows = initialise(bulls_and_cows);
 		goal = number_gen(goal, diff_number);
@@ -189,10 +226,18 @@ void gameloop()
 		while (bulls_and_cows[0] != 4) {
 			bulls_and_cows = initialise(bulls_and_cows);
 			++guesses;
-			cout << guesses << "> ";
-			guess = get_guess(guess);
+			
+			cout << guesses << prompt;
+			guess = get_guess(guess, guesses);
+			if (guess == quit) {
+				cout << quit_text
+					<< "My number was: " << goal << '\n';
+				break;
+			}
+
 			bulls_and_cows = compare(guess, goal, bulls_and_cows);
 			cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";
+			
 			if (bulls_and_cows[0] == 4)
 				win(goal, guesses);
 		}
@@ -206,7 +251,6 @@ int main()
 	try {
 		intro();
 		gameloop();
-		keep_window_open("~~");
 		return 0;
 	}
 	catch (exception& e) {

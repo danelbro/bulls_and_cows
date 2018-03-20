@@ -117,8 +117,8 @@ string number_gen(string number, int top)
 		// }
 
 	for (size_t i = 0; i < local_number.size(); ++i)
-		number[i] = numbers[local_number[i]]; // populates string with char digits
-	                                              // identical to local_number
+		number[i] = numbers[local_number[i]];       // populates string with char digits
+	                                                    // identical to local_number
 	return number;
 }
 
@@ -158,7 +158,7 @@ string get_guess(string local, int guesses)
 	//		        if (local[i] == local[j])
 	//                              error("No repeated digits");
 	//	}
-	//}
+	
 	return local;
 }
 
@@ -170,21 +170,21 @@ vector<int> compare(string guess, string goal, vector<int> result)
   	// work out bulls
   	for (size_t i = 0; i < guess.size(); ++i) {
     		if (guess[i] == goal[i]) {
-      		++result[0];
-      		guess[i] = used;
-      		goal[i] = seen;
+      			++result[0];
+      			guess[i] = used;
+      			goal[i] = seen;
 		}
 	}
   
-  	//work out cows
+  	// work out cows
   	for (size_t i = 0; i < guess.size(); ++i) {
     		if (guess[i] != goal[i]) {
       			for (size_t j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
-	  			++result[1];
-	  			guess[i] = used;
-	  			goal[j] = seen;
-	  			break;
+	  				++result[1];
+	  				guess[i] = used;
+	  				goal[j] = seen;
+	  				break;
 				}
 			}
 		}

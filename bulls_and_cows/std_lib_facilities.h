@@ -19,6 +19,7 @@
 	Revised November 25 2013: remove support for pre-C++11 compilers, use C++11: <chrono>
 	Revised November 28 2013: add a few container algorithms
 	Revised June 8 2014: added #ifndef to workaround Microsoft C++11 weakness
+	March 20 2018: added '#include <limits>' - Dan Elbro
 */
 
 #ifndef H112
@@ -41,6 +42,7 @@
 #include <regex>
 #include<random>
 #include<stdexcept>
+#include<limits>
 
 //------------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v4.0 2018-03-13
+// v4.1 2018-03-13
 
 #include "std_lib_facilities.h"
 #include <limits>
@@ -20,7 +20,7 @@ void clean(runtime_error e)
 {
 	cerr << e.what();
 	cin.clear();
-	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	return;
 }
 
@@ -41,7 +41,7 @@ int difficulty ()
 	string diff_label;
 	while (true) {
 		try {
-			cin >> diff_label;
+			cin >> diff_label;			
 			if (diff_label != easy && diff_label != medium && diff_label != hard)
 				error("easy | medium | hard\n");
 			else break;
@@ -50,6 +50,7 @@ int difficulty ()
 			clean(e);
 		}
 	}
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	return difficulties.at(diff_label);
 }
 
@@ -61,14 +62,16 @@ bool check(string check_text)
 
 	while (checker != 'Y' && checker != 'n') {
 		try {
-			if (!(cin >> checker)) error("Enter Y/n: ");
+		        cin >> checker;
 			switch (checker) {
 			case 'Y':
+			        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				return true;
 			case 'n':
+			        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				return false;
 			default:
-				error("Enter Y/n: ");
+			        error("Enter Y/n: ");
 			}
 		}
 		catch (runtime_error& e) {

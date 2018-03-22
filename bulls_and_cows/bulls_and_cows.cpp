@@ -1,11 +1,13 @@
 // bulls_and_cows
-// v4.2 2018-03-13
+// v4.3 2018-03-22
 
 #include "std_lib_facilities.h"
 
 // GLOBAL CONSTANTS
 // -----------------------------------------------------------------------------
 
+const string bulls = "bulls";
+const string cows = "cows";
 const string prompt = "> ";
 const string quit = "quit";
 const string quit_text = "Gave up after ";
@@ -116,11 +118,11 @@ string number_gen(string number, int top)
 	return number;
 }
 
-vector<int> initialise(vector<int> local)
+unordered_map<string, int> initialise(unordered_map<string, int> bulls_and_cows)
 {
-	for (size_t i = 0; i < local.size(); ++i)
-		local[i] = 0;
-	return local;
+        bulls_and_cows[bulls] = 0;
+        bulls_and_cows[cows] = 0;
+	return bulls_and_cows;
 }
 
 bool is_number(string& s)
@@ -149,7 +151,7 @@ string get_guess(string local, int guesses)
 	return local;
 }
 
-vector<int> compare(string guess, string goal, vector<int> result)
+unordered_map<string, int> compare(string guess, string goal, unordered_map<string, int> bulls_and_cows)
 {
 	const char seen = 'x';
   	const char used = 'u';
@@ -157,7 +159,7 @@ vector<int> compare(string guess, string goal, vector<int> result)
   	// work out bulls
   	for (size_t i = 0; i < guess.size(); ++i) {
     		if (guess[i] == goal[i]) {
-      			++result[0];
+      			++bulls_and_cows[bulls];
       			guess[i] = used;
       			goal[i] = seen;
 		}
@@ -168,7 +170,7 @@ vector<int> compare(string guess, string goal, vector<int> result)
     		if (guess[i] != goal[i]) {
       			for (size_t j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
-	  				++result[1];
+	  				++bulls_and_cows[cows];
 	  				guess[i] = used;
 	  				goal[j] = seen;
 	  				break;
@@ -176,7 +178,7 @@ vector<int> compare(string guess, string goal, vector<int> result)
 			}
 		}
 	}
-  	return result;
+  	return bulls_and_cows;
 }
 
 void win(string number, int guesses)
@@ -193,9 +195,9 @@ void give_up(string goal, int guesses)
 	return;
 }
 
-void score(vector<int> bulls_and_cows)
+void score(unordered_map<string, int> bulls_and_cows)
 {
-	cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";
+	cout << "[" << bulls_and_cows[bulls] << "] Bulls and [" << bulls_and_cows[cows] << "] Cows\n";
 }
 
 void rules()
@@ -229,7 +231,10 @@ void intro()
 void gameloop()
 {
 	bool play_again = true;
-	vector<int> bulls_and_cows(2);
+	unordered_map<string, int> bulls_and_cows = {
+	        { bulls,  0},
+	        { cows, 0 }
+	};
 	string goal = "    ";
 	string guess;
 
@@ -241,20 +246,20 @@ void gameloop()
 
 		cout << "\nI am thinking of 4 digits...try to guess them!\n";
 
-		while (bulls_and_cows[0] != 4) {
+		while (bulls_and_cows[bulls] != 4) {
 			bulls_and_cows = initialise(bulls_and_cows);
 			++guesses;
 			
 			guess = get_guess(guess, guesses);
 			if (guess == quit) {
-			        give_up(guesses, goal);
+			        give_up(goal, guesses);
 				break;
 			}
 
 			bulls_and_cows = compare(guess, goal, bulls_and_cows);
 			score(bulls_and_cows);
 			
-			if (bulls_and_cows[0] == 4)
+			if (bulls_and_cows[bulls] == 4)
 				win(goal, guesses);
 		}
 		play_again = check(play_again_text);

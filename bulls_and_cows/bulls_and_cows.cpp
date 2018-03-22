@@ -28,9 +28,10 @@ int difficulty ()
 	const string easy = "easy";
 	const string medium = "medium";
 	const string hard = "hard";
-	const string error_text = string("Enter ") + string(easy + '/'
-							    + medium + '/'
-							    + hard + string(": "));
+	const string error_text = string("Enter ") 
+		                + string(easy + '/' 
+			        + medium + '/' 
+			  	+ hard + string(": "));
 
 	const unordered_map<string, int> difficulties = {
 		{ easy, 6 },
@@ -108,13 +109,6 @@ string number_gen(string number, int top)
 	    	else if (top > 9)
 			local_number[i] = (rand() % top);
 	}
-		// can remove repeated digits; incorporate into for loop if this is needed
-		// if (i >= 1) {
-		//	for (size_t j = i - 1; j < local_number.size(); --j) {
-		//		while (local_number[i] == local_number[j]) 
-		//			local_number[i] = (rand() % top);
-		//	}
-		// }
 
 	for (size_t i = 0; i < local_number.size(); ++i)
 		number[i] = numbers[local_number[i]];       // populates string with char digits
@@ -151,14 +145,7 @@ string get_guess(string local, int guesses)
 		catch (runtime_error& e) {
 			clean(e);
 		}
-	}
-
-	//	for (size_t i = 1; i < local.size(); ++i) {
-	//	        for (size_t j = i - 1; j < local.size(); --j) {
-	//		        if (local[i] == local[j])
-	//                              error("No repeated digits");
-	//	}
-	
+	}	
 	return local;
 }
 
@@ -197,6 +184,18 @@ void win(string number, int guesses)
 	cout << "You win! My number was: "
 		<< number << '\n'
 		<< "You took " << guesses << " guesses.\n";
+}
+
+void give_up(string goal, int guesses)
+{
+	cout << quit_text << guesses - 1 << " guesses!\n"
+		<< "My number was: " << goal << '\n';
+	return;
+}
+
+void score(vector<int> bulls_and_cows)
+{
+	cout << "[" << bulls_and_cows[0] << "] Bulls and [" << bulls_and_cows[1] << "] Cows\n";
 }
 
 void rules()
@@ -248,15 +247,12 @@ void gameloop()
 			
 			guess = get_guess(guess, guesses);
 			if (guess == quit) {
-			        cout << quit_text << guesses << " guesses!\n"
-			             << "My number was: " << goal << '\n';
+			        give_up(guesses, goal);
 				break;
 			}
 
 			bulls_and_cows = compare(guess, goal, bulls_and_cows);
-			cout << "["
-			     << bulls_and_cows[0] << "] Bulls and ["
-			     << bulls_and_cows[1] << "] Cows\n";
+			score(bulls_and_cows);
 			
 			if (bulls_and_cows[0] == 4)
 				win(goal, guesses);

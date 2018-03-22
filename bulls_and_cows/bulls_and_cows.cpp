@@ -28,9 +28,10 @@ int difficulty ()
 	const string easy = "easy";
 	const string medium = "medium";
 	const string hard = "hard";
-	const string error_text = string("Enter ") + string(easy + '/'
-							    + medium + '/'
-							    + hard + string(": "));
+	const string error_text = string("Enter ") 
+		                + string(easy + '/' 
+			        + medium + '/' 
+			  	+ hard + string(": "));
 
 	const unordered_map<string, int> difficulties = {
 		{ easy, 6 },

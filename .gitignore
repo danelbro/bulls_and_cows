@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/bulls_and_cows/bulls_and_cows.exe

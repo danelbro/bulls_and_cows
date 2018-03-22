@@ -17,11 +17,17 @@ const string play_again_text = "Would you like to play again?";
 // FUNCTIONS
 // -----------------------------------------------------------------------------
 
+void max_ignore()
+{
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	return;
+}
+
 void clean(runtime_error e)
 {
 	cerr << e.what();
 	cin.clear();
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	max_ignore();
 	return;
 }
 
@@ -30,10 +36,7 @@ int difficulty ()
 	const string easy = "easy";
 	const string medium = "medium";
 	const string hard = "hard";
-	const string error_text = string("Enter ") 
-		                + string(easy + '/' 
-			        + medium + '/' 
-			  	+ hard + string(": "));
+	const string error_text = string("Enter ") + easy + '/' + medium + '/' + hard + string(": ");
 
 	const unordered_map<string, int> difficulties = {
 		{ easy, 6 },
@@ -59,7 +62,7 @@ int difficulty ()
 			clean(e);
 		}
 	}
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	max_ignore();
 
 	cout << "\nDifficulty selected: " << diff_label << ".\n";
 	return difficulties.at(diff_label);
@@ -81,10 +84,10 @@ bool check(string check_text)
 			        error(error_text);
 			switch (checker) {
 			case affirm:
-			        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				max_ignore();
 				return true;
 			case neg:
-			        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				max_ignore();
 				return false;
 			default:
 			        error(error_text);
@@ -105,14 +108,14 @@ string number_gen(string number, int top)
 	// find another way to do this
 	const vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
-	for (size_t i = 0; i < local_number.size(); ++i) {
+	for (int i = 0; i < local_number.size(); ++i) {
 	    	if (top < 9)
 			local_number[i] = (rand() % top + 1);
 	    	else if (top > 9)
 			local_number[i] = (rand() % top);
 	}
 
-	for (size_t i = 0; i < local_number.size(); ++i)
+	for (int i = 0; i < local_number.size(); ++i)
 		number[i] = numbers[local_number[i]];       // populates string with char digits
 	                                                    // identical to local_number
 	return number;
@@ -157,7 +160,7 @@ unordered_map<string, int> compare(string guess, string goal, unordered_map<stri
   	const char used = 'u';
   
   	// work out bulls
-  	for (size_t i = 0; i < guess.size(); ++i) {
+  	for (int i = 0; i < guess.size(); ++i) {
     		if (guess[i] == goal[i]) {
       			++bulls_and_cows[bulls];
       			guess[i] = used;
@@ -166,9 +169,9 @@ unordered_map<string, int> compare(string guess, string goal, unordered_map<stri
 	}
   
   	// work out cows
-  	for (size_t i = 0; i < guess.size(); ++i) {
+  	for (int i = 0; i < guess.size(); ++i) {
     		if (guess[i] != goal[i]) {
-      			for (size_t j = 0; j < goal.size(); ++j) {
+      			for (int j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
 	  				++bulls_and_cows[cows];
 	  				guess[i] = used;

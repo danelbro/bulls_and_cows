@@ -123,8 +123,8 @@ string number_gen(string number, int top)
 
 unordered_map<string, int> initialise(unordered_map<string, int> bulls_and_cows)
 {
-        bulls_and_cows[bulls] = 0;
-        bulls_and_cows[cows] = 0;
+	bulls_and_cows[bulls] = 0;
+	bulls_and_cows[cows] = 0;
 	return bulls_and_cows;
 }
 
@@ -139,49 +139,49 @@ string get_guess(string local, int guesses)
 {
 	while (true) {
 		try {
-		        cout << '\n' << guesses << prompt;
+			cout << '\n' << guesses << prompt;
 			cin >> local;
 			if (local == quit)
-			        break;
+				break;
 			else if (local.size() != 4 || !is_number(local))
-			        error("Guess must be 4 digits!\n");
+				error("Guess must be 4 digits!\n");
 			break;
 		}
 		catch (runtime_error& e) {
 			clean(e);
 		}
-	}	
+	}
 	return local;
 }
 
 unordered_map<string, int> compare(string guess, string goal, unordered_map<string, int> bulls_and_cows)
 {
 	const char seen = 'x';
-  	const char used = 'u';
-  
-  	// work out bulls
-  	for (int i = 0; i < guess.size(); ++i) {
-    		if (guess[i] == goal[i]) {
-      			++bulls_and_cows[bulls];
-      			guess[i] = used;
-      			goal[i] = seen;
+	const char used = 'u';
+	
+	// work out bulls
+	for (int i = 0; i < guess.size(); ++i) {
+		if (guess[i] == goal[i]) {
+			++bulls_and_cows[bulls];
+			guess[i] = used;
+			goal[i] = seen;
 		}
 	}
-  
-  	// work out cows
-  	for (int i = 0; i < guess.size(); ++i) {
-    		if (guess[i] != goal[i]) {
-      			for (int j = 0; j < goal.size(); ++j) {
+	
+	// work out cows
+	for (int i = 0; i < guess.size(); ++i) {
+		if (guess[i] != goal[i]) {
+			for (int j = 0; j < goal.size(); ++j) {
 				if (guess[i] == goal[j]) {
-	  				++bulls_and_cows[cows];
-	  				guess[i] = used;
-	  				goal[j] = seen;
-	  				break;
+					++bulls_and_cows[cows];
+					guess[i] = used;
+					goal[j] = seen;
+					break;
 				}
 			}
 		}
 	}
-  	return bulls_and_cows;
+	return bulls_and_cows;
 }
 
 void win(string number, int guesses)
@@ -222,7 +222,7 @@ void intro()
 		<< "        ====== A N D ======\n"
 		<< "        ===== C O W S =====\n"
 		<< '\n';
-
+	
 	if (check(rules_check_text)) {
 		rules();
 		return;
@@ -246,16 +246,16 @@ void gameloop()
 		int guesses = 0;
 		bulls_and_cows = initialise(bulls_and_cows);
 		goal = number_gen(goal, diff_number);
-
+		
 		cout << "\nI am thinking of 4 digits...try to guess them!\n";
-
+		
 		while (bulls_and_cows[bulls] != 4) {
 			bulls_and_cows = initialise(bulls_and_cows);
 			++guesses;
 			
 			guess = get_guess(guess, guesses);
 			if (guess == quit) {
-			        give_up(goal, guesses);
+				give_up(goal, guesses);
 				break;
 			}
 

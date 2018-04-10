@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v4.3 2018-03-22
+// v4.4 2018-04-10
 
 #include "std_lib_facilities.h"
 
@@ -210,7 +210,7 @@ void rules()
 		<< "to win. If you guess a digit correctly in\n"
 		<< "the right place, you get a Bull. If you guess\n"
 		<< "a digit correctly but in the wrong place, you\n"
-		<< "get a Cow. 4 Bulls wins! (Type \"quit\" to\n"
+		<< "get a Cow. 4 Bulls wins! (Type \"" + quit + "\" to\n"
 		<< "give up for the round.)\n";
 	return;
 }

@@ -1,7 +1,24 @@
 // bulls_and_cows
 // v4.4 2018-04-10
 
-#include "std_lib_facilities.h"
+#include <algorithm>
+#include <iostream>
+#include <random>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+using std::string;
+using std::vector;
+using std::runtime_error;
+using std::cin; using std::cout; using std::cerr;
+using std::find_if;
+using std::unordered_map;
+using std::srand;
+using std::exception;
+using std::numeric_limits;
+using std::streamsize;
 
 // GLOBAL CONSTANTS
 // -----------------------------------------------------------------------------
@@ -14,13 +31,51 @@ const string quit_text = "Gave up after ";
 const string rules_check_text = "Would you like to read the rules?";
 const string play_again_text = "Would you like to play again?";
 
-// FUNCTIONS
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------------------
+
+void intro();
+void gameloop();
+void rules();
+int difficulty();
+unordered_map<string, int> initialise(unordered_map<string, int> bulls_and_cows);
+string number_gen(string number,int top);
+string get_guess(string local, int guesses);
+unordered_map<string, int> evaluate_guess(string guess, string goal,
+                                          unordered_map<string, int> bulls_and_cows);
+void give_up(string goal, int guesses);
+void win(string number, int guesses);
+void score(unordered_map<string, int> bulls_and_cows);
+
+// utilities
+void max_ignore();
+void clean(runtime_error e);
+bool y_or_n(string check_text);
+bool is_number(string& s);
+
+// FUNCTION DEFINITIONS
+// -----------------------------------------------------------------------------
+
+int main()
+{
+    try {
+        intro();
+        gameloop();
+        return 0;
+    }
+    catch (exception& e) {
+        cerr << "runtime error: " << e.what() << '\n';
+        return 1;
+    }
+    catch (...) {
+        cerr << "unknown error\n";
+        return 2;
+    }
+}
 
 void max_ignore()
 {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    return;
 }
 
 void clean(runtime_error e)
@@ -28,7 +83,6 @@ void clean(runtime_error e)
     cerr << e.what();
     cin.clear();
     max_ignore();
-    return;
 }
 
 int difficulty ()
@@ -39,9 +93,9 @@ int difficulty ()
     const string error_text = string("Enter ") + easy + '/' + medium + '/' + hard + string(": ");
 
     const unordered_map<string, int> difficulties = {
-        { easy, 6 },
-        { medium, 8 },
-        { hard, 10 }
+        {easy, 6},
+        {medium, 8},
+        {hard, 10}
     };
 
     cout << "\nChoose a difficulty:\n"
@@ -54,8 +108,10 @@ int difficulty ()
     while (true) {
         try {
             cin >> diff_label;
-            if (diff_label != easy && diff_label != medium && diff_label != hard)
-                error(error_text);
+            if (diff_label != easy &&
+                diff_label != medium &&
+                diff_label != hard)
+                throw runtime_error(error_text);
             else break;
         }
         catch (runtime_error& e) {
@@ -68,7 +124,7 @@ int difficulty ()
     return difficulties.at(diff_label);
 }
 
-bool check(string check_text)
+bool y_or_n(string check_text)
 // general yes/no test
 {
     const char affirm = 'y';
@@ -80,8 +136,8 @@ bool check(string check_text)
 
     while (checker != affirm && checker != neg) {
         try {
-                if (!(cin >> checker))
-                    error(error_text);
+            if (!(cin >> checker))
+                throw runtime_error(error_text);
             switch (checker) {
             case affirm:
                 max_ignore();
@@ -90,14 +146,14 @@ bool check(string check_text)
                 max_ignore();
                 return false;
             default:
-                    error(error_text);
+                    throw runtime_error(error_text);
             }
         }
         catch (runtime_error& e) {
             clean(e);
         }
     }
-    error("unknown error!");
+    throw runtime_error("unknown error!");
     return false;
 }
 
@@ -108,14 +164,14 @@ string number_gen(string number, int top)
     // find another way to do this
     const vector<char> numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
-    for (int i = 0; i < local_number.size(); ++i) {
-            if (top < 9)
+    for (size_t i = 0; i < local_number.size(); ++i) {
+        if (top < 9)
             local_number[i] = (rand() % top + 1);
-            else if (top > 9)
+        else if (top > 9)
             local_number[i] = (rand() % top);
     }
 
-    for (int i = 0; i < local_number.size(); ++i)
+    for (size_t i = 0; i < local_number.size(); ++i)
         number[i] = numbers[local_number[i]];       // populates string with char digits
                                                         // identical to local_number
     return number;
@@ -130,8 +186,8 @@ unordered_map<string, int> initialise(unordered_map<string, int> bulls_and_cows)
 
 bool is_number(string& s)
 {
-    return !s.empty() && find_if(s.begin(),
-        s.end(), [](char c) { return !isdigit(c); }) == s.end();
+    return !s.empty() && find_if(s.begin(), s.end(), [](char c) {
+        return !isdigit(c); }) == s.end();
 }
 
 string get_guess(string local, int guesses)
@@ -144,7 +200,7 @@ string get_guess(string local, int guesses)
             if (local == quit)
                 break;
             else if (local.size() != 4 || !is_number(local))
-                error("Guess must be 4 digits!\n");
+                throw runtime_error("Guess must be 4 digits!\n");
             break;
         }
         catch (runtime_error& e) {
@@ -154,13 +210,13 @@ string get_guess(string local, int guesses)
     return local;
 }
 
-unordered_map<string, int> compare(string guess, string goal, unordered_map<string, int> bulls_and_cows)
+unordered_map<string, int> evaluate_guess(string guess, string goal, unordered_map<string, int> bulls_and_cows)
 {
     const char seen = 'x';
     const char used = 'u';
 
     // work out bulls
-    for (int i = 0; i < guess.size(); ++i) {
+    for (size_t i = 0; i < guess.size(); ++i) {
         if (guess[i] == goal[i]) {
             ++bulls_and_cows[bulls];
             guess[i] = used;
@@ -169,9 +225,9 @@ unordered_map<string, int> compare(string guess, string goal, unordered_map<stri
     }
 
     // work out cows
-    for (int i = 0; i < guess.size(); ++i) {
+    for (size_t i = 0; i < guess.size(); ++i) {
         if (guess[i] != goal[i]) {
-            for (int j = 0; j < goal.size(); ++j) {
+            for (size_t j = 0; j < goal.size(); ++j) {
                 if (guess[i] == goal[j]) {
                     ++bulls_and_cows[cows];
                     guess[i] = used;
@@ -195,12 +251,12 @@ void give_up(string goal, int guesses)
 {
     cout << quit_text << guesses - 1 << " guesses!\n"
         << "My number was: " << goal << '\n';
-    return;
 }
 
 void score(unordered_map<string, int> bulls_and_cows)
 {
-    cout << "[" << bulls_and_cows[bulls] << "] Bulls and [" << bulls_and_cows[cows] << "] Cows\n";
+    cout << "[" << bulls_and_cows[bulls] << "] Bulls and ["
+         << bulls_and_cows[cows] << "] Cows\n";
 }
 
 void rules()
@@ -212,7 +268,6 @@ void rules()
         << "a digit correctly but in the wrong place, you\n"
         << "get a Cow. 4 Bulls wins! (Type \"" + quit + "\" to\n"
         << "give up for the round.)\n";
-    return;
 }
 
 void intro()
@@ -223,22 +278,19 @@ void intro()
         << "        ===== C O W S =====\n"
         << '\n';
 
-    if (check(rules_check_text)) {
+    if (y_or_n(rules_check_text)) {
         rules();
-        return;
     }
-    else
-        return;
 }
 
 void gameloop()
 {
     bool play_again = true;
     unordered_map<string, int> bulls_and_cows = {
-            { bulls,  0},
-            { cows, 0 }
+            {bulls,  0},
+            {cows, 0 }
     };
-    string goal = "    ";
+    string goal = "    "; // 4 spaces
     string guess;
 
     while (play_again) {
@@ -259,32 +311,12 @@ void gameloop()
                 break;
             }
 
-            bulls_and_cows = compare(guess, goal, bulls_and_cows);
+            bulls_and_cows = evaluate_guess(guess, goal, bulls_and_cows);
             score(bulls_and_cows);
 
             if (bulls_and_cows[bulls] == 4)
                 win(goal, guesses);
         }
-        play_again = check(play_again_text);
-    }
-    return;
-}
-
-int main()
-{
-    try {
-        intro();
-        gameloop();
-        return 0;
-    }
-    catch (exception& e) {
-        cerr << "runtime error: " << e.what() << '\n';
-        keep_window_open("~1");
-        return 1;
-    }
-    catch (...) {
-        cerr << "unknown error\n";
-        keep_window_open("~2");
-        return 2;
+        play_again = y_or_n(play_again_text);
     }
 }

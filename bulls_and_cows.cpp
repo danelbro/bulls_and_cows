@@ -1,5 +1,5 @@
 // bulls_and_cows
-// v4.4 2018-04-10
+// v5.0 2022-03-09
 
 #include <algorithm>
 #include <iostream>
